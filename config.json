@@ -1,0 +1,16 @@
+{
+    "jwt": {
+      "SECRET_KEY": "!^%S3erviC3#C4"
+    },
+    "debug": false,
+    "databases": {
+      "mysql": {
+        "user": "admin",
+        "password": "password",
+        "host": "127.0.0.1",
+        "dbname": "db_bca",
+        "port": "3306"
+      }
+    }
+  }
+  
