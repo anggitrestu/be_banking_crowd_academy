@@ -53,18 +53,20 @@ func main() {
 	tutorRepository := database.NewTutorRepository(db)
 	learnerRepository := database.NewLearnerRepository(db)
 	classRepository := database.NewClassRepository(db)
+	myclassRepository := database.NewMyClassRepository(db)
 
 	authService := auth.NewService(configJWT)
 	tutorService := service.NewTutorService(tutorRepository)
 	learnerService := service.NewLeranerService(learnerRepository)
 	authMiddleware := auth.AuthMiddleware(authService, tutorService, learnerService)
-
 	classService := service.NewClassService(classRepository, *tutorService)
+	myclassService := service.NewMyClassService(myclassRepository)
 
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService)
 	learnerHandler := handler.NewLearnerHandler(learnerService)
 	classHandler := handler.NewClassHandler(classService)
+	myclassHandler := handler.NewMyClassHandler(myclassService, classService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -81,9 +83,8 @@ func main() {
 	api.POST("/classes", authMiddleware, classHandler.CreateClass)
 	api.GET("/classes", authMiddleware, classHandler.GetAll)
 
-	api.POST("/blabla", authMiddleware, userHandler.RegisterUser)
-
-	// api := router.Group("/api/v1")
+	api.POST("/myclasses", authMiddleware, myclassHandler.CreateMyClass)
+	api.GET("/myclasses", authMiddleware, myclassHandler.GetAllMyClass)
 
 	router.Run()
 }
