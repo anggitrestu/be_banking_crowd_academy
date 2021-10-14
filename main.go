@@ -53,18 +53,20 @@ func main() {
 	tutorRepository := database.NewTutorRepository(db)
 	learnerRepository := database.NewLearnerRepository(db)
 	classRepository := database.NewClassRepository(db)
+	myclassRepository := database.NewMyClassRepository(db)
 
 	authService := auth.NewService(configJWT)
 	tutorService := service.NewTutorService(tutorRepository)
-	authMiddlewareTutor := auth.AuthMiddlewareTutor(authService, tutorService)
 	learnerService := service.NewLeranerService(learnerRepository)
-	authMiddlewareLearner := auth.AuthMiddlewareLearner(authService, learnerService)
+	authMiddleware := auth.AuthMiddleware(authService, tutorService, learnerService)
 	classService := service.NewClassService(classRepository, *tutorService)
+	myclassService := service.NewMyClassService(myclassRepository)
 
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService)
 	learnerHandler := handler.NewLearnerHandler(learnerService)
 	classHandler := handler.NewClassHandler(classService)
+	myclassHandler := handler.NewMyClassHandler(myclassService, classService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -72,18 +74,17 @@ func main() {
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
 
-	api.PUT("/tutors/:id", authMiddlewareTutor, tutorHandler.UpdateTutor)
-	api.GET("/tutors", authMiddlewareTutor, tutorHandler.FetchTutor)
+	api.PUT("/tutors/:id", authMiddleware, tutorHandler.UpdateTutor)
+	api.GET("/tutors", authMiddleware, tutorHandler.FetchTutor)
 
-	api.PUT("/learners/:id", authMiddlewareLearner, learnerHandler.UpdateLearner)
-	api.GET("/learners", authMiddlewareLearner, learnerHandler.FetchLearner)
+	api.PUT("/learners/:id", authMiddleware, learnerHandler.UpdateLearner)
+	api.GET("/learners", authMiddleware, learnerHandler.FetchLearner)
 
-	api.POST("/classes", authMiddlewareTutor, classHandler.CreateClass)
-	api.GET("/classes", authMiddlewareTutor, classHandler.GetAll)
+	api.POST("/classes", authMiddleware, classHandler.CreateClass)
+	api.GET("/classes", authMiddleware, classHandler.GetAll)
 
-	api.POST("/blabla", authMiddlewareLearner, userHandler.RegisterUser)
-
-	// api := router.Group("/api/v1")
+	api.POST("/myclasses", authMiddleware, myclassHandler.CreateMyClass)
+	api.GET("/myclasses", authMiddleware, myclassHandler.GetAllMyClass)
 
 	router.Run()
 }
