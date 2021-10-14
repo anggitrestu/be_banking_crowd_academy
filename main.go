@@ -52,16 +52,19 @@ func main() {
 
 	tutorRepository := database.NewTutorRepository(db)
 	learnerRepository := database.NewLearnerRepository(db)
+	classRepository := database.NewClassRepository(db)
 
 	authService := auth.NewService(configJWT)
 	tutorService := service.NewTutorService(tutorRepository)
 	authMiddlewareTutor := auth.AuthMiddlewareTutor(authService, tutorService)
 	learnerService := service.NewLeranerService(learnerRepository)
 	authMiddlewareLearner := auth.AuthMiddlewareLearner(authService, learnerService)
+	classService := service.NewClassService(classRepository, *tutorService)
 
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
-	tutorHandler := handler.NewTutorHandler(tutorService, authService)
-	learnerHandler := handler.NewLearnerHandler(learnerService, authService)
+	tutorHandler := handler.NewTutorHandler(tutorService)
+	learnerHandler := handler.NewLearnerHandler(learnerService)
+	classHandler := handler.NewClassHandler(classService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -74,6 +77,9 @@ func main() {
 
 	api.PUT("/learners/:id", authMiddlewareLearner, learnerHandler.UpdateLearner)
 	api.GET("/learners", authMiddlewareLearner, learnerHandler.FetchLearner)
+
+	api.POST("/classes", authMiddlewareTutor, classHandler.CreateClass)
+	api.GET("/classes", authMiddlewareTutor, classHandler.GetAll)
 
 	api.POST("/blabla", authMiddlewareLearner, userHandler.RegisterUser)
 

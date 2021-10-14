@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"banking_crowd/auth"
 	"banking_crowd/helper"
 	"banking_crowd/models/tutors"
 	"banking_crowd/service"
@@ -12,11 +11,10 @@ import (
 
 type tutorHandler struct {
 	tutorService service.TutorService
-	authService  auth.Service
 }
 
-func NewTutorHandler(tutorService service.TutorService, authService auth.Service) *tutorHandler {
-	return &tutorHandler{tutorService, authService}
+func NewTutorHandler(tutorService service.TutorService) *tutorHandler {
+	return &tutorHandler{tutorService}
 }
 
 func (h *tutorHandler) FetchTutor(c *gin.Context) {
