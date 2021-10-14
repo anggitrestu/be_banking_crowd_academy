@@ -1,1 +1,1 @@
-web: banking_crowd
+web: bin/banking_crowd
