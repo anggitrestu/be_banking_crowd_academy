@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddlewareTutor(authService Service, tutorService service.TutorService) gin.HandlerFunc {
+func AuthMiddleware(authService Service, tutorService service.TutorService, learnerService service.LearnerService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
@@ -41,59 +41,28 @@ func AuthMiddlewareTutor(authService Service, tutorService service.TutorService)
 			return
 		}
 
-		tutorID := int(claim["id"].(float64))
-		tutor, err := tutorService.GetTutorByID(tutorID)
+		id := int(claim["id"].(float64))
+		tutor, err := tutorService.GetTutorByID(id)
+		if err != nil {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		id = int(claim["id"].(float64))
+		learner, err := learnerService.GetLearnerByID(id)
 		if err != nil {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
-		c.Set("currentTutor", tutor)
-
-	}
-}
-
-func AuthMiddlewareLearner(authService Service, learnerService service.LearnerService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-
-		if !strings.Contains(authHeader, "Bearer") {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
+		if tutor.ID > 0 {
+			c.Set("currentTutor", tutor)
 		}
 
-		tokenString := ""
-		arrayToken := strings.Split(authHeader, " ")
-		if len(arrayToken) == 2 {
-			tokenString = arrayToken[1]
+		if learner.ID != 0 {
+			c.Set("currentLearner", learner)
 		}
-
-		token, err := authService.ValidateToken(tokenString)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		claim, ok := token.Claims.(jwt.MapClaims)
-
-		if !ok || !token.Valid {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		learnerID := int(claim["id"].(float64))
-		tutor, err := learnerService.GetLearnerByID(learnerID)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		c.Set("currentLearner", tutor)
 
 	}
 }
