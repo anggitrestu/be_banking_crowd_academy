@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"banking_crowd/auth"
 	"banking_crowd/helper"
 	"banking_crowd/models/learners"
 	"banking_crowd/service"
@@ -12,11 +11,10 @@ import (
 
 type learnerHandler struct {
 	learnerService service.LearnerService
-	authService    auth.Service
 }
 
-func NewLearnerHandler(learnerService service.LearnerService, authService auth.Service) *learnerHandler {
-	return &learnerHandler{learnerService, authService}
+func NewLearnerHandler(learnerService service.LearnerService) *learnerHandler {
+	return &learnerHandler{learnerService}
 }
 
 func (h *learnerHandler) FetchLearner(c *gin.Context) {
