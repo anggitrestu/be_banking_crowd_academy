@@ -51,21 +51,31 @@ func main() {
 	configJWT := viper.GetString(`jwt.SECRET_KEY`)
 
 	tutorRepository := database.NewTutorRepository(db)
+	learnerRepository := database.NewLearnerRepository(db)
 
 	authService := auth.NewService(configJWT)
 	tutorService := service.NewTutorService(tutorRepository)
 	authMiddlewareTutor := auth.AuthMiddlewareTutor(authService, tutorService)
+	learnerService := service.NewLeranerService(learnerRepository)
+	authMiddlewareLearner := auth.AuthMiddlewareLearner(authService, learnerService)
 
-	userHandler := handler.NewUserHandler(tutorService, authService)
+	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService, authService)
+	learnerHandler := handler.NewLearnerHandler(learnerService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
-	api.GET("/tutors", authMiddlewareTutor, tutorHandler.UpdateTutor)
-	api.POST("/blabla", authMiddlewareTutor, userHandler.RegisterUser)
+
+	api.PUT("/tutors/:id", authMiddlewareTutor, tutorHandler.UpdateTutor)
+	api.GET("/tutors", authMiddlewareTutor, tutorHandler.FetchTutor)
+
+	api.PUT("/learners/:id", authMiddlewareLearner, learnerHandler.UpdateLearner)
+	api.GET("/learners", authMiddlewareLearner, learnerHandler.FetchLearner)
+
+	api.POST("/blabla", authMiddlewareLearner, userHandler.RegisterUser)
 
 	// api := router.Group("/api/v1")
 

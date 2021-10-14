@@ -12,6 +12,7 @@ type TutorService interface {
 	RegisterTutor(input tutors.RegisterUserInput) (tutors.Tutor, error)
 	GetTutorByID(ID int) (tutors.Tutor, error)
 	Login(input tutors.LogisUserInput) (tutors.Tutor, error)
+	UpdateTutor(inputID tutors.GetTutorInput, inputData tutors.CreateTutorInput) (tutors.Tutor, error)
 }
 
 type tutorService struct {
@@ -73,5 +74,28 @@ func (s *tutorService) Login(input tutors.LogisUserInput) (tutors.Tutor, error) 
 	}
 
 	return tutor, nil
+
+}
+
+func (s *tutorService) UpdateTutor(inputID tutors.GetTutorInput, inputData tutors.CreateTutorInput) (tutors.Tutor, error) {
+	tutor, err := s.repository.FindByID(inputID.ID)
+
+	if err != nil {
+		return tutor, err
+	}
+
+	tutor.Nama = inputData.Nama
+	tutor.MasaKerja = inputData.MasaKerja
+	tutor.SitusWeb = inputData.SitusWeb
+	tutor.Kompetensi = inputData.Kompetensi
+	tutor.Pekerjaan = inputData.Pekerjaan
+	tutor.TopikDiminati = inputData.TopikDiminati
+
+	updateTutor, err := s.repository.Update(tutor)
+	if err != nil {
+		return updateTutor, err
+	}
+
+	return updateTutor, nil
 
 }
