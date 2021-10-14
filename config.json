@@ -5,12 +5,13 @@
     "debug": false,
     "databases": {
       "mysql": {
-        "user": "admin",
-        "password": "password",
-        "host": "127.0.0.1",
-        "dbname": "db_bca",
+        "user": "b679e8eaebeac3",
+        "password": "9b6213b0",
+        "host": "us-cdbr-east-04.cleardb.com",
+        "dbname": "heroku_e7587f7560bdf39",
         "port": "3306"
       }
     }
   }
+  
   
