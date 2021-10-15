@@ -42,7 +42,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, response)
 			return
 		}
-		token, err := h.authService.GenerateToken(newTutor.ID)
+		token, err := h.authService.GenerateToken(newTutor.ID, role)
 		if err != nil {
 			response := helper.APIResponse("Register account tutor failed", http.StatusBadRequest, "error", nil)
 			c.JSON(http.StatusBadRequest, response)
@@ -58,7 +58,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, response)
 			return
 		}
-		token, err := h.authService.GenerateToken(newLearner.ID)
+		token, err := h.authService.GenerateToken(newLearner.ID, role)
 		if err != nil {
 			response := helper.APIResponse("Register account failed learner", http.StatusBadRequest, "error", nil)
 			c.JSON(http.StatusBadRequest, response)
@@ -95,7 +95,7 @@ func (h *userHandler) Login(c *gin.Context) {
 			return
 		}
 
-		token, err := h.authService.GenerateToken(loggedinTutor.ID)
+		token, err := h.authService.GenerateToken(loggedinTutor.ID, role)
 		if err != nil {
 			response := helper.APIResponse(err.Error(), http.StatusBadRequest, "errors", nil)
 			c.JSON(http.StatusBadRequest, response)
@@ -117,7 +117,7 @@ func (h *userHandler) Login(c *gin.Context) {
 			return
 		}
 
-		token, err := h.authService.GenerateToken(loggedinLearner.ID)
+		token, err := h.authService.GenerateToken(loggedinLearner.ID, role)
 		if err != nil {
 			response := helper.APIResponse(err.Error(), http.StatusBadRequest, "errors", nil)
 			c.JSON(http.StatusBadRequest, response)

@@ -42,25 +42,24 @@ func AuthMiddleware(authService Service, tutorService service.TutorService, lear
 		}
 
 		id := int(claim["id"].(float64))
-		tutor, err := tutorService.GetTutorByID(id)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-		id = int(claim["id"].(float64))
-		learner, err := learnerService.GetLearnerByID(id)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		if tutor.ID > 0 {
+		role := int(claim["role"].(float64))
+		if role == 1 {
+			tutor, err := tutorService.GetTutorByID(id)
+			if err != nil {
+				response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+				c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+				return
+			}
+			c.Set("role", "tutor")
 			c.Set("currentTutor", tutor)
-		}
-
-		if learner.ID != 0 {
+		} else {
+			learner, err := learnerService.GetLearnerByID(id)
+			if err != nil {
+				response := helper.APIResponse("Unauthorized5", http.StatusUnauthorized, "error", nil)
+				c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+				return
+			}
+			c.Set("role", "learner")
 			c.Set("currentLearner", learner)
 		}
 
