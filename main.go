@@ -59,6 +59,8 @@ func main() {
 	tutorService := service.NewTutorService(tutorRepository)
 	learnerService := service.NewLeranerService(learnerRepository)
 	authMiddleware := auth.AuthMiddleware(authService, tutorService, learnerService)
+	tutor := auth.Permission(&auth.Role{Roles: "tutor"})
+	learner := auth.Permission(&auth.Role{Roles: "learner"})
 	classService := service.NewClassService(classRepository, *tutorService)
 	myclassService := service.NewMyClassService(myclassRepository)
 
@@ -74,17 +76,17 @@ func main() {
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
 
-	api.PUT("/tutors/:id", authMiddleware, tutorHandler.UpdateTutor)
-	api.GET("/tutors", authMiddleware, tutorHandler.FetchTutor)
+	api.PUT("/tutors/:id", authMiddleware, tutor, tutorHandler.UpdateTutor)
+	api.GET("/tutors", authMiddleware, tutor, tutorHandler.FetchTutor)
 
-	api.PUT("/learners/:id", authMiddleware, learnerHandler.UpdateLearner)
-	api.GET("/learners", authMiddleware, learnerHandler.FetchLearner)
+	api.PUT("/learners/:id", authMiddleware, learner, learnerHandler.UpdateLearner)
+	api.GET("/learners", authMiddleware, learner, learnerHandler.FetchLearner)
 
-	api.POST("/classes", authMiddleware, classHandler.CreateClass)
+	api.POST("/classes", authMiddleware, tutor, classHandler.CreateClass)
 	api.GET("/classes", authMiddleware, classHandler.GetAll)
 
-	api.POST("/myclasses", authMiddleware, myclassHandler.CreateMyClass)
-	api.GET("/myclasses", authMiddleware, myclassHandler.GetAllMyClass)
+	api.POST("/myclasses", authMiddleware, tutor, myclassHandler.CreateMyClass)
+	api.GET("/myclasses", authMiddleware, learner, myclassHandler.GetAllMyClass)
 
 	router.Run()
 }
