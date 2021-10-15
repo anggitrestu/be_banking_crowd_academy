@@ -14,6 +14,5 @@ type MyClass struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
-	// Learners  []learners.Learner `gorm:"foreignKey:LearnerID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"Learners"`
-	Class classes.Class `gorm:"foreignKey:ClassID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"class"`
+	Class     classes.Class  `gorm:"foreignKey:ClassID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"class"`
 }

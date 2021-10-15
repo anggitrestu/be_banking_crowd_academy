@@ -40,7 +40,7 @@ func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.Class, error) {
 
 func (r *classRepository) FindAll() ([]classes.Class, error) {
 	var classes []classes.Class
-	err := r.db.Find(&classes).Error
+	err := r.db.Raw("SELECT * FROM classes").Scan(&classes).Error
 	if err != nil {
 		return classes, err
 	}
