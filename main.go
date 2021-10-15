@@ -54,6 +54,7 @@ func main() {
 	learnerRepository := database.NewLearnerRepository(db)
 	classRepository := database.NewClassRepository(db)
 	myclassRepository := database.NewMyClassRepository(db)
+	articleRepository := database.NewArticleRepository(db)
 
 	authService := auth.NewService(configJWT)
 	tutorService := service.NewTutorService(tutorRepository)
@@ -63,12 +64,14 @@ func main() {
 	learner := auth.Permission(&auth.Role{Roles: "learner"})
 	classService := service.NewClassService(classRepository, *tutorService)
 	myclassService := service.NewMyClassService(myclassRepository)
+	articleService := service.NewArticleService(articleRepository, *tutorService)
 
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService)
 	learnerHandler := handler.NewLearnerHandler(learnerService)
 	classHandler := handler.NewClassHandler(classService)
 	myclassHandler := handler.NewMyClassHandler(myclassService, classService)
+	articleHandler := handler.NewArticleHandler(articleService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -87,6 +90,10 @@ func main() {
 
 	api.POST("/myclasses", authMiddleware, tutor, myclassHandler.CreateMyClass)
 	api.GET("/myclasses", authMiddleware, learner, myclassHandler.GetAllMyClass)
+
+	api.POST("/articles", authMiddleware, tutor, articleHandler.CreateArticle)
+	api.GET("/articles", authMiddleware, articleHandler.GetAll)
+	api.DELETE("/articles/:id", authMiddleware, tutor, articleHandler.Delete)
 
 	router.Run()
 }
