@@ -60,6 +60,7 @@ func main() {
 	tutorService := service.NewTutorService(tutorRepository)
 	learnerService := service.NewLeranerService(learnerRepository)
 	authMiddleware := auth.AuthMiddleware(authService, tutorService, learnerService)
+	corsOrigin := auth.CORSMiddleware()
 	tutor := auth.Permission(&auth.Role{Roles: "tutor"})
 	learner := auth.Permission(&auth.Role{Roles: "learner"})
 	classService := service.NewClassService(classRepository, *tutorService)
@@ -74,6 +75,7 @@ func main() {
 	articleHandler := handler.NewArticleHandler(articleService)
 
 	router := gin.Default()
+	router.Use(corsOrigin)
 	api := router.Group("/api/v1")
 
 	api.POST("/register", userHandler.RegisterUser)
