@@ -14,6 +14,7 @@ type LearnerService interface {
 	GetLearnerByID(ID int) (learners.Learner, error)
 	LoginLearner(input tutors.LogisUserInput) (learners.Learner, error)
 	UpdateLearner(inputID learners.GetLearnerInput, inputData learners.CreateLearnerInput) (learners.Learner, error)
+	GetLearnerByIdCLass(classID int) ([]learners.Learner, error)
 }
 
 type learnerService struct {
@@ -97,4 +98,13 @@ func (s *learnerService) UpdateLearner(inputID learners.GetLearnerInput, inputDa
 
 	return updateLearner, nil
 
+}
+
+func (s *learnerService) GetLearnerByIdCLass(classID int) ([]learners.Learner, error) {
+	learners, err := s.repository.GetLearnerByIdCLass(classID)
+	if err != nil {
+		return learners, err
+	}
+
+	return learners, nil
 }

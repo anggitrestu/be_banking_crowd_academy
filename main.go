@@ -70,7 +70,7 @@ func main() {
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService)
 	learnerHandler := handler.NewLearnerHandler(learnerService)
-	classHandler := handler.NewClassHandler(classService)
+	classHandler := handler.NewClassHandler(classService, learnerService)
 	myclassHandler := handler.NewMyClassHandler(myclassService, classService)
 	articleHandler := handler.NewArticleHandler(articleService)
 

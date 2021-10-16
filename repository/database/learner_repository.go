@@ -11,6 +11,7 @@ type LearnerRepository interface {
 	FindByID(ID int) (learners.Learner, error)
 	Update(learner learners.Learner) (learners.Learner, error)
 	FindByEmail(email string) (learners.Learner, error)
+	GetLearnerByIdCLass(classID int) ([]learners.Learner, error)
 }
 
 type learnerRepository struct {
@@ -57,3 +58,20 @@ func (r *learnerRepository) FindByEmail(email string) (learners.Learner, error) 
 
 	return learner, nil
 }
+
+func (r learnerRepository) GetLearnerByIdCLass(classID int) ([]learners.Learner, error) {
+	var learners []learners.Learner
+	err := r.db.Raw("select learners.email from learners inner join my_classes on learners.id = my_classes.learner_id where my_classes.class_id = ?;", classID).Scan(&learners).Error
+	if err != nil {
+		return learners, err
+	}
+	return learners, nil
+
+}
+
+/*
+select learners.email from learners
+inner join my_classes on learners.id =
+my_classes.learner_id
+where my_classes.class_id = ?;
+*/

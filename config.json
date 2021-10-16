@@ -1,17 +1,15 @@
 {
-    "jwt": {
-      "SECRET_KEY": "!^%S3erviC3#C4"
-    },
-    "debug": false,
-    "databases": {
-      "mysql": {
-        "user": "b679e8eaebeac3",
-        "password": "9b6213b0",
-        "host": "us-cdbr-east-04.cleardb.com",
-        "dbname": "heroku_e7587f7560bdf39",
-        "port": "3306"
-      }
+  "jwt": {
+    "SECRET_KEY": "!^%S3erviC3#C4"
+  },
+  "debug": false,
+  "databases": {
+    "mysql": {
+      "user": "b679e8eaebeac3",
+      "password": "9b6213b0",
+      "host": "us-cdbr-east-04.cleardb.com",
+      "dbname": "heroku_e7587f7560bdf39",
+      "port": "3306"
     }
   }
-  
-  
+}
