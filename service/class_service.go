@@ -49,7 +49,7 @@ func (s *classService) CreateClass(input classes.CreateClassInput) (classes.Clas
 
 }
 
-func (s *classService) GetAll(TutorID int) ([]classes.Class, error) {
+func (s *classService) GetAll(TutorID int) ([]interface{}, error) {
 
 	if TutorID != 0 {
 		classes, err := s.repository.FindByIdTutor(TutorID)

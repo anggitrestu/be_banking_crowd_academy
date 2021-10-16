@@ -8,8 +8,8 @@ import (
 
 type ClassRepository interface {
 	Save(class classes.Class) (classes.Class, error)
-	FindByIdTutor(TutorID int) ([]classes.Class, error)
-	FindAll() ([]classes.Class, error)
+	FindByIdTutor(TutorID int) ([]interface{}, error)
+	FindAll() ([]interface{}, error)
 }
 
 type classRepository struct {
@@ -29,8 +29,8 @@ func (r *classRepository) Save(class classes.Class) (classes.Class, error) {
 	return class, nil
 }
 
-func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.Class, error) {
-	var classes []classes.Class
+func (r *classRepository) FindByIdTutor(TutorID int) ([]interface{}, error) {
+	var classes []interface{}
 	err := r.db.Where("tutor_id = ? ", TutorID).Find(&classes).Error
 	if err != nil {
 		return classes, err
@@ -38,8 +38,8 @@ func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.Class, error) {
 	return classes, nil
 }
 
-func (r *classRepository) FindAll() ([]classes.Class, error) {
-	var classes []classes.Class
+func (r *classRepository) FindAll() ([]interface{}, error) {
+	var classes []interface{}
 	err := r.db.Raw("SELECT * FROM classes").Scan(&classes).Error
 	if err != nil {
 		return classes, err
