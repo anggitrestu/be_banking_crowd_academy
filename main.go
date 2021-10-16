@@ -70,7 +70,7 @@ func main() {
 	userHandler := handler.NewUserHandler(tutorService, learnerService, authService)
 	tutorHandler := handler.NewTutorHandler(tutorService)
 	learnerHandler := handler.NewLearnerHandler(learnerService)
-	classHandler := handler.NewClassHandler(classService)
+	classHandler := handler.NewClassHandler(classService, learnerService)
 	myclassHandler := handler.NewMyClassHandler(myclassService, classService)
 	articleHandler := handler.NewArticleHandler(articleService)
 
@@ -90,7 +90,7 @@ func main() {
 	api.POST("/classes", authMiddleware, tutor, classHandler.CreateClass)
 	api.GET("/classes", authMiddleware, classHandler.GetAll)
 
-	api.POST("/myclasses", authMiddleware, tutor, myclassHandler.CreateMyClass)
+	api.POST("/myclasses", authMiddleware, learner, myclassHandler.CreateMyClass)
 	api.GET("/myclasses", authMiddleware, learner, myclassHandler.GetAllMyClass)
 
 	api.POST("/articles", authMiddleware, tutor, articleHandler.CreateArticle)

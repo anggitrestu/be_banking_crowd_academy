@@ -11,11 +11,12 @@ import (
 )
 
 type classHandler struct {
-	classService service.ClassService
+	classService   service.ClassService
+	learnerService service.LearnerService
 }
 
-func NewClassHandler(classService service.ClassService) *classHandler {
-	return &classHandler{classService}
+func NewClassHandler(classService service.ClassService, learnerService service.LearnerService) *classHandler {
+	return &classHandler{classService, learnerService}
 }
 
 func (h *classHandler) CreateClass(c *gin.Context) {
@@ -36,7 +37,8 @@ func (h *classHandler) CreateClass(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Success to create class", http.StatusOK, "success", classes.FormatInfoClass(newClass))
+	var pendaftar []string
+	response := helper.APIResponse("Success to create class", http.StatusOK, "success", classes.FormatInfoClass(newClass, pendaftar))
 	c.JSON(http.StatusOK, response)
 }
 
@@ -53,7 +55,42 @@ func (h *classHandler) GetAll(c *gin.Context) {
 	}
 	id, _ := strconv.Atoi(tutorID)
 	allclass, err := h.classService.GetAll(id)
-	response := helper.APIResponse("Success get all class", http.StatusOK, "success", classes.FormatInfoClasses(allclass))
+
+	infoclass := []classes.InfoClassFormatter{}
+	for i, class := range allclass {
+		var emails []string
+		learners, err := h.learnerService.GetLearnerByIdCLass(class.ID)
+		if err != nil {
+			response := helper.APIResponse(err.Error(), http.StatusBadRequest, "error", nil)
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		if learners != nil {
+			for _, learner := range learners {
+				emails = append(emails, learner.Email)
+			}
+		} else {
+			emails = []string{}
+		}
+
+		class := classes.InfoClassFormatter{
+			ID:        allclass[i].ID,
+			TutorID:   allclass[i].TutorID,
+			Topik:     allclass[i].Topik,
+			Jenis:     allclass[i].Jenis,
+			Judul:     allclass[i].Judul,
+			Jadwal:    allclass[i].Jadwal,
+			LinkZoom:  allclass[i].Deskripsi,
+			Deskripsi: allclass[i].Deskripsi,
+			Modul:     allclass[i].Modul,
+			Pendaftar: emails,
+		}
+		infoclass = append(infoclass, class)
+
+	}
+
+	response := helper.APIResponse("Success get all class", http.StatusOK, "success", infoclass)
 	c.JSON(http.StatusOK, response)
 
 }
