@@ -90,7 +90,7 @@ func main() {
 	api.POST("/classes", authMiddleware, tutor, classHandler.CreateClass)
 	api.GET("/classes", authMiddleware, classHandler.GetAll)
 
-	api.POST("/myclasses", authMiddleware, tutor, myclassHandler.CreateMyClass)
+	api.POST("/myclasses", authMiddleware, learner, myclassHandler.CreateMyClass)
 	api.GET("/myclasses", authMiddleware, learner, myclassHandler.GetAllMyClass)
 
 	api.POST("/articles", authMiddleware, tutor, articleHandler.CreateArticle)
