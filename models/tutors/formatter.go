@@ -20,9 +20,9 @@ func FormatTutor(tutor Tutor, token string) *TutorFormatter {
 }
 
 type InfoTutorFormatter struct {
-	ID            int    `json:"id_tutor"`
-	Nama          string `json:"nama_tutor"`
-	Email         string `json:"email_tutor"`
+	ID            int    `json:"id"`
+	Nama          string `json:"nama"`
+	Email         string `json:"email"`
 	MasaKerja     int    `json:"masa_kerja"`
 	SitusWeb      string `json:"situs_web"`
 	Kompetensi    string `json:"kompetensi"`

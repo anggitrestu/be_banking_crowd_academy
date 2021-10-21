@@ -4,13 +4,12 @@ import (
 	"banking_crowd/models/classes"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type ClassRepository interface {
 	Save(class classes.Class) (classes.Class, error)
-	FindByIdTutor(TutorID int) ([]classes.Class, error)
-	FindAll() ([]classes.Class, error)
+	FindByIdTutor(TutorID int) ([]classes.ResponseClass, error)
+	FindAll() ([]classes.ResponseClass, error)
 }
 
 type classRepository struct {
@@ -30,8 +29,8 @@ func (r *classRepository) Save(class classes.Class) (classes.Class, error) {
 	return class, nil
 }
 
-func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.Class, error) {
-	var classes []classes.Class
+func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.ResponseClass, error) {
+	var classes []classes.ResponseClass
 	err := r.db.Where("tutor_id = ? ", TutorID).Find(&classes).Error
 	if err != nil {
 		return classes, err
@@ -39,28 +38,26 @@ func (r *classRepository) FindByIdTutor(TutorID int) ([]classes.Class, error) {
 	return classes, nil
 }
 
-func (r *classRepository) FindAll() ([]classes.Class, error) {
-	var classes []classes.Class
-	// err := r.db.Joins("Tutor").Find(&classes).Error
-	// err := r.db.Raw("SELECT * FROM classes INNER JOIN my_classes ON  my_classes.class_id = classes.id").Scan(&classes).Error
-	err := r.db.Preload(clause.Associations).Find(&classes).Error
+func (r *classRepository) FindAll() ([]classes.ResponseClass, error) {
+	var classes []classes.ResponseClass
+	err := r.db.Raw("select classes.*, learners.email from classes inner join my_classes  on classes.id = my_classes.class_id inner join learners  on my_classes.learner_id = learners.id").Scan(&classes).Error
 	if err != nil {
 		return classes, err
 	}
 	return classes, nil
 }
 
+// func (r *classRepository) FindAll() ([]classes.Class, error) {
+// 	var classes []classes.Class
+// 	err := r.db.Preload(clause.Associations).Find(&classes).Error
+// 	if err != nil {
+// 		return classes, err
+// 	}
+// 	return classes, nil
+// }
+
 /*
 
-SELECT * FROM classes INNER JOIN my_classes ON  my_classes.class_id = classes.id;
-
-
-SELECT Orders.OrderID, Customers.CustomerName
-FROM Orders
-INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
-
-SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
-FROM ((Orders
-INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
-INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+select classes.*, learners.email from classes inner join my_classes  on classes.id = my_classes.class_id
+inner join learners  on my_classes.learner_id = learners.id;
 */

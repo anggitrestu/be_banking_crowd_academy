@@ -7,7 +7,7 @@ import (
 
 type MyClassService interface {
 	CreateClass(input myclasses.CreateMyClassInput, learnerID int) (myclasses.MyClass, error)
-	GetAllMyClass(learnerID int) ([]myclasses.MyClass, error)
+	GetAllMyClass(learnerID int) ([]myclasses.ResponseMyClass, error)
 	IsExistMyClass(input myclasses.CreateMyClassInput, learnerID int) (myclasses.MyClass, error)
 }
 
@@ -33,7 +33,7 @@ func (s *myClassService) CreateClass(input myclasses.CreateMyClassInput, learner
 
 }
 
-func (s *myClassService) GetAllMyClass(learnerID int) ([]myclasses.MyClass, error) {
+func (s *myClassService) GetAllMyClass(learnerID int) ([]myclasses.ResponseMyClass, error) {
 	myclass, err := s.repository.FindAllByLearnerID(learnerID)
 	if err != nil {
 		return myclass, err

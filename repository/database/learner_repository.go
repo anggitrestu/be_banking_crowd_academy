@@ -59,6 +59,8 @@ func (r *learnerRepository) FindByEmail(email string) (learners.Learner, error) 
 	return learner, nil
 }
 
+
+
 func (r learnerRepository) GetLearnerByIdCLass(classID int) ([]learners.Learner, error) {
 	var learners []learners.Learner
 	err := r.db.Raw("select learners.email from learners inner join my_classes on learners.id = my_classes.learner_id where my_classes.class_id = ?;", classID).Scan(&learners).Error
@@ -69,9 +71,3 @@ func (r learnerRepository) GetLearnerByIdCLass(classID int) ([]learners.Learner,
 
 }
 
-/*
-select learners.email from learners
-inner join my_classes on learners.id =
-my_classes.learner_id
-where my_classes.class_id = ?;
-*/

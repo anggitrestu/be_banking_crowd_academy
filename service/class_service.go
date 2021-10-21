@@ -8,7 +8,7 @@ import (
 
 type ClassService interface {
 	CreateClass(input classes.CreateClassInput) (classes.Class, error)
-	GetAll(TutorID int) ([]classes.Class, error)
+	GetAll(TutorID int) ([]classes.ResponseClass, error)
 }
 
 type classService struct {
@@ -49,7 +49,7 @@ func (s *classService) CreateClass(input classes.CreateClassInput) (classes.Clas
 
 }
 
-func (s *classService) GetAll(TutorID int) ([]classes.Class, error) {
+func (s *classService) GetAll(TutorID int) ([]classes.ResponseClass, error) {
 
 	if TutorID != 0 {
 		classes, err := s.repository.FindByIdTutor(TutorID)

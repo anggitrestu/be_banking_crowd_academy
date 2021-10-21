@@ -12,7 +12,7 @@ type Class struct {
 	TutorID   int            `json:"tutor_id"`
 	Topik     string         `json:"topik"`
 	Jenis     string         `json:"jenis" gorm:"type:enum('gratis', 'berbayar')"`
-	Judul     string         `json:"judul" gorm:"size:256"`
+	Judul     string         `json:"judul"`
 	Jadwal    string         `json:"jadwal" gorm:"size:256"`
 	LinkZoom  string         `json:"link_zoom" gorm:"size:256"`
 	Deskripsi string         `json:"deskripsi"`
@@ -22,3 +22,4 @@ type Class struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	Tutor     tutors.Tutor   `gorm:"foreignKey:TutorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"tutor"`
 }
+

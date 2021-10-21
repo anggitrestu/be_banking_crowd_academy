@@ -7,7 +7,7 @@ import (
 )
 
 type MyClassRepository interface {
-	FindAllByLearnerID(learnerID int) ([]myclasses.MyClass, error)
+	FindAllByLearnerID(learnerID int) ([]myclasses.ResponseMyClass, error)
 	CheckClass(classID int, learnerID int) (myclasses.MyClass, error)
 	Save(myClass myclasses.MyClass) (myclasses.MyClass, error)
 }
@@ -20,15 +20,17 @@ func NewMyClassRepository(db *gorm.DB) *myClassRepository {
 	return &myClassRepository{db}
 }
 
-func (r *myClassRepository) FindAllByLearnerID(learnerID int) ([]myclasses.MyClass, error) {
-	var myClasses []myclasses.MyClass
-	err := r.db.Where("learner_id = ?", learnerID).Preload("Class").Find(&myClasses).Error
+func (r *myClassRepository) FindAllByLearnerID(learnerID int) ([]myclasses.ResponseMyClass, error) {
+	var myClasses []myclasses.ResponseMyClass
+	err := r.db.Raw("select my_classes.* , classes.* from my_classes inner join classes on my_classes.class_id = classes.id where my_classes.learner_id = ? ", learnerID).Scan(&myClasses).Error
 	if err != nil {
 		return myClasses, err
 	}
 
 	return myClasses, nil
 }
+
+// select my_classes.* , classes.* from my_classes inner join classes on my_classes.class_id = classes.id where my_classes.learner_id = 5;
 
 func (r *myClassRepository) CheckClass(classID int, learnerID int) (myclasses.MyClass, error) {
 	var myClass myclasses.MyClass
