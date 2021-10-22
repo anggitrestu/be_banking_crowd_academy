@@ -16,7 +16,7 @@ type Class struct {
 	Jadwal    string         `json:"jadwal" gorm:"size:256"`
 	LinkZoom  string         `json:"link_zoom" gorm:"size:256"`
 	Deskripsi string         `json:"deskripsi"`
-	Modul     string         `json:"modul" gorm:"size:256"`
+	Modul     string         `json:"modul"  gorm:"size:256"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`

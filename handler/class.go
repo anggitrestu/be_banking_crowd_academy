@@ -4,10 +4,13 @@ import (
 	"banking_crowd/helper"
 	"banking_crowd/models/classes"
 	"banking_crowd/service"
+	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type classHandler struct {
@@ -20,8 +23,33 @@ func NewClassHandler(classService service.ClassService, learnerService service.L
 }
 
 func (h *classHandler) CreateClass(c *gin.Context) {
+	file, err := c.FormFile("modul")
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload file", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Retrieve file information
+	extension := filepath.Ext(file.Filename)
+	// Generate random file name for the new uploaded file so it doesn't override the old file with same name
+	newFileName := uuid.New().String() + extension
+
+	path := fmt.Sprintf("storage/files/%s", newFileName)
+
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to file modul", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	var input classes.CreateClassInput
-	err := c.ShouldBindJSON(&input)
+	err = c.Bind(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -30,7 +58,8 @@ func (h *classHandler) CreateClass(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	newClass, err := h.classService.CreateClass(input)
+
+	newClass, err := h.classService.CreateClass(input, path)
 	if err != nil {
 
 		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "error", nil)
@@ -40,6 +69,7 @@ func (h *classHandler) CreateClass(c *gin.Context) {
 	var pendaftar []string
 	response := helper.APIResponse("Success to create class", http.StatusOK, "success", classes.FormatInfoClass(newClass, pendaftar))
 	c.JSON(http.StatusOK, response)
+
 }
 
 func (h *classHandler) GetAll(c *gin.Context) {
@@ -55,7 +85,12 @@ func (h *classHandler) GetAll(c *gin.Context) {
 	}
 	id, _ := strconv.Atoi(tutorID)
 	allclass, err := h.classService.GetAll(id)
+	if err != nil {
 
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 	infoclass := []classes.InfoClassFormatter{}
 	for i, class := range allclass {
 		var emails []string
@@ -81,7 +116,7 @@ func (h *classHandler) GetAll(c *gin.Context) {
 			Jenis:     allclass[i].Jenis,
 			Judul:     allclass[i].Judul,
 			Jadwal:    allclass[i].Jadwal,
-			LinkZoom:  allclass[i].Deskripsi,
+			LinkZoom:  allclass[i].LinkZoom,
 			Deskripsi: allclass[i].Deskripsi,
 			Modul:     allclass[i].Modul,
 			Pendaftar: emails,
