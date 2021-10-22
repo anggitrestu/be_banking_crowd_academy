@@ -1,12 +1,11 @@
 package classes
 
 type CreateClassInput struct {
-	TutorID   int    `json:"tutor_id" binding:"required"`
-	Jenis     string `json:"jenis"`
-	Topik     string `json:"topik" binding:"required"`
-	Judul     string `json:"judul" binding:"required"`
-	Jadwal    string `json:"jadwal" binding:"required"`
-	LinkZoom  string `json:"link_zoom" binding:"required"`
-	Deskripsi string `json:"deskripsi" binding:"required"`
-	Modul     string `json:"modul" binding:"required"`
+	TutorID   int    `form:"tutor_id" binding:"required"`
+	Jenis     string `form:"jenis" binding:"required"`
+	Topik     string `form:"topik" binding:"required"`
+	Judul     string `form:"judul" binding:"required"`
+	Jadwal    string `form:"jadwal" binding:"required"`
+	LinkZoom  string `form:"link_zoom" binding:"required"`
+	Deskripsi string `form:"deskripsi" binding:"required"`
 }

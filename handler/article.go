@@ -53,6 +53,12 @@ func (h *articleHandler) GetAll(c *gin.Context) {
 	}
 	id, _ := strconv.Atoi(tutorID)
 	allclass, err := h.articleService.GetAll(id)
+	if err != nil {
+
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 	response := helper.APIResponse("Success get all class", http.StatusOK, "success", articles.FormatArticles(allclass))
 	c.JSON(http.StatusOK, response)
 

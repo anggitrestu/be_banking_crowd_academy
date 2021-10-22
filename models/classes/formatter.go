@@ -21,7 +21,7 @@ func FormatInfoClass(class Class, pendaftar []string) *InfoClassFormatter {
 		Jenis:     class.Jenis,
 		Judul:     class.Judul,
 		Jadwal:    class.Jadwal,
-		LinkZoom:  class.Jadwal,
+		LinkZoom:  class.LinkZoom,
 		Deskripsi: class.Deskripsi,
 		Modul:     class.Modul,
 		Pendaftar: pendaftar,

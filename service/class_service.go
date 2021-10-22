@@ -7,7 +7,7 @@ import (
 )
 
 type ClassService interface {
-	CreateClass(input classes.CreateClassInput) (classes.Class, error)
+	CreateClass(input classes.CreateClassInput, fileLocation string) (classes.Class, error)
 	GetAll(TutorID int) ([]classes.Class, error)
 }
 
@@ -20,7 +20,7 @@ func NewClassService(repository database.ClassRepository, serviceTutor tutorServ
 	return &classService{repository, serviceTutor}
 }
 
-func (s *classService) CreateClass(input classes.CreateClassInput) (classes.Class, error) {
+func (s *classService) CreateClass(input classes.CreateClassInput, fileLocation string) (classes.Class, error) {
 
 	tutor, err := s.serviceTutor.GetTutorByID(input.TutorID)
 	if err != nil {
@@ -36,9 +36,9 @@ func (s *classService) CreateClass(input classes.CreateClassInput) (classes.Clas
 	class.Judul = input.Judul
 	class.Topik = input.Topik
 	class.Jadwal = input.Jadwal
-	class.Deskripsi = input.Deskripsi
 	class.LinkZoom = input.LinkZoom
-	class.Modul = input.Modul
+	class.Deskripsi = input.Deskripsi
+	class.Modul = fileLocation
 
 	newClass, err := s.repository.Save(class)
 	if err != nil {
