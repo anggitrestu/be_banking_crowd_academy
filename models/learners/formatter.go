@@ -1,9 +1,9 @@
 package learners
 
 type LearnerFormatter struct {
-	ID    int    `json:"id_learner"`
+	ID    int    `json:"id"`
 	Nama  string `json:"nama_learner"`
-	Email string `json:"email_learner"`
+	Email string `json:"email"`
 	Token string `json:"token"`
 }
 
@@ -20,9 +20,9 @@ func Formatlearner(learner Learner, token string) LearnerFormatter {
 }
 
 type InfoLearnerFormatter struct {
-	ID            int    `json:"id_learner"`
-	Nama          string `json:"nama_learner"`
-	Email         string `json:"email_learner"`
+	ID            int    `json:"id"`
+	Nama          string `json:"nama"`
+	Email         string `json:"email"`
 	Usia          int    `json:"usia" `
 	Pekerjaan     string `json:"pekerjaan" `
 	TopikDiminati string `json:"topik_diminati" `
